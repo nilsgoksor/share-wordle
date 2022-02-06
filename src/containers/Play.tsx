@@ -22,8 +22,8 @@ export const Play = ({ answer, author }: PlayI) => {
   const guess = `${letterOne}${letterTwo}${letterThree}${letterFour}${letterFive}`;
 
   useEffect(() => {
-    setFeedback("");
-  }, [guess]);
+    !victory && setFeedback("");
+  }, [victory, guess]);
 
   const guessHandler = () => {
     if (
@@ -37,12 +37,13 @@ export const Play = ({ answer, author }: PlayI) => {
       setLetterThree("");
       setLetterFour("");
       setLetterFive("");
-      setFeedback("");
       if (guess === answer) {
         setVictory(true);
         setFeedback(`Well done! Let ${author} know how it went :)`);
       } else if (updatedGuesses.length === 5) {
         setFeedback("Game over... :(");
+      } else {
+        setFeedback("");
       }
     } else {
       setFeedback("Word not in dictionary :O");
@@ -57,11 +58,14 @@ export const Play = ({ answer, author }: PlayI) => {
     return letterIndex === i;
   };
 
+  const gameFinished = victory || guesses.length === 5;
+  console.log(feedback);
+
   return (
     <>
       <p>{`${author} sent you a custom wordle!`}</p>
       {guesses.map((w) => (
-        <S.TileContainer>
+        <S.TileContainer key={w}>
           <S.Tile
             present={isLetterPresent(w[0])}
             correct={isLetterCorrect(w[0], 0)}
@@ -94,72 +98,74 @@ export const Play = ({ answer, author }: PlayI) => {
           </S.Tile>
         </S.TileContainer>
       ))}
-      <S.TileContainer>
-        <S.TypingTile
-          id="letter-one"
-          type="text"
-          maxLength={1}
-          value={letterOne}
-          autoFocus
-          onChange={(e) => {
-            const l = e.target.value.toUpperCase();
-            setLetterOne(l);
-            if (l.length > 0) {
-              document.getElementById("letter-two")?.focus();
-            }
-          }}
-        />
-        <S.TypingTile
-          id="letter-two"
-          type="text"
-          maxLength={1}
-          value={letterTwo}
-          onChange={(e) => {
-            const l = e.target.value.toUpperCase();
-            setLetterTwo(l);
-            if (l.length > 0) {
-              document.getElementById("letter-three")?.focus();
-            }
-          }}
-        />
-        <S.TypingTile
-          id="letter-three"
-          type="text"
-          maxLength={1}
-          value={letterThree}
-          onChange={(e) => {
-            const l = e.target.value.toUpperCase();
-            setLetterThree(l);
-            if (l.length > 0) {
-              document.getElementById("letter-four")?.focus();
-            }
-          }}
-        />
-        <S.TypingTile
-          id="letter-four"
-          type="text"
-          maxLength={1}
-          value={letterFour}
-          onChange={(e) => {
-            const l = e.target.value.toUpperCase();
-            setLetterFour(l);
-            if (l.length > 0) {
-              document.getElementById("letter-five")?.focus();
-            }
-          }}
-        />
-        <S.TypingTile
-          id="letter-five"
-          type="text"
-          maxLength={1}
-          value={letterFive}
-          onChange={(e) => {
-            const l = e.target.value.toUpperCase();
-            setLetterFive(l);
-          }}
-        />
-      </S.TileContainer>
-      {!victory && guesses.length !== 5 && (
+      {!gameFinished && (
+        <S.TileContainer>
+          <S.TypingTile
+            id="letter-one"
+            type="text"
+            maxLength={1}
+            value={letterOne}
+            autoFocus
+            onChange={(e) => {
+              const l = e.target.value.toUpperCase();
+              setLetterOne(l);
+              if (l.length > 0) {
+                document.getElementById("letter-two")?.focus();
+              }
+            }}
+          />
+          <S.TypingTile
+            id="letter-two"
+            type="text"
+            maxLength={1}
+            value={letterTwo}
+            onChange={(e) => {
+              const l = e.target.value.toUpperCase();
+              setLetterTwo(l);
+              if (l.length > 0) {
+                document.getElementById("letter-three")?.focus();
+              }
+            }}
+          />
+          <S.TypingTile
+            id="letter-three"
+            type="text"
+            maxLength={1}
+            value={letterThree}
+            onChange={(e) => {
+              const l = e.target.value.toUpperCase();
+              setLetterThree(l);
+              if (l.length > 0) {
+                document.getElementById("letter-four")?.focus();
+              }
+            }}
+          />
+          <S.TypingTile
+            id="letter-four"
+            type="text"
+            maxLength={1}
+            value={letterFour}
+            onChange={(e) => {
+              const l = e.target.value.toUpperCase();
+              setLetterFour(l);
+              if (l.length > 0) {
+                document.getElementById("letter-five")?.focus();
+              }
+            }}
+          />
+          <S.TypingTile
+            id="letter-five"
+            type="text"
+            maxLength={1}
+            value={letterFive}
+            onChange={(e) => {
+              const l = e.target.value.toUpperCase();
+              setLetterFive(l);
+            }}
+          />
+        </S.TileContainer>
+      )}
+      {!gameFinished && (
         <S.Button onClick={() => guessHandler()} disabled={guess.length !== 5}>
           Guess
         </S.Button>
