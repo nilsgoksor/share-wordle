@@ -1,24 +1,19 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useFindSharedWord } from "./useFindSharedWord";
+import { Create } from "./containers/Create";
+import { Play } from "./containers/Play";
 
 function App() {
+  const { word, author } = useFindSharedWord();
+
+  const valid = typeof word === "string" && typeof author === "string";
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header>
+        <h1>Wordle</h1>
       </header>
+      {!valid ? <Create /> : <Play answer={word} author={author} />}
     </div>
   );
 }
