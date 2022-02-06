@@ -65,3 +65,8 @@ export const Input = styled.input`
   padding: 10px;
   margin: 10px;
 `;
+
+export const Footer = styled.footer`
+  position: absolute;
+  bottom: 20px;
+`;
