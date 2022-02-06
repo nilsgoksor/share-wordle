@@ -14,8 +14,8 @@ export const Tile = styled.div<TileI>`
   justify-content: center;
   align-items: center;
   border: 2px solid black;
-  height: 64px;
-  width: 64px;
+  height: 50px;
+  width: 50px;
   margin-right: 10px;
   background-color: ${(p) => p.present && "yellow"};
   background-color: ${(p) => p.correct && "green"};
@@ -27,8 +27,8 @@ export const TypingTile = styled.input`
   justify-content: center;
   align-items: center;
   border: 2px solid black;
-  height: 64px;
-  width: 64px;
+  height: 50px;
+  width: 50px;
   margin-right: 10px;
   text-align: center;
 `;

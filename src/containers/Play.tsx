@@ -59,7 +59,6 @@ export const Play = ({ answer, author }: PlayI) => {
   };
 
   const gameFinished = victory || guesses.length === 5;
-  console.log(feedback);
 
   return (
     <>
