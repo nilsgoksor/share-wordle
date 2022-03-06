@@ -14,8 +14,8 @@ export const Tile = styled.div<TileI>`
   justify-content: center;
   align-items: center;
   border: 2px solid black;
-  height: 50px;
-  width: 50px;
+  height: 32px;
+  width: 32px;
   margin-right: 10px;
   background-color: ${(p) => p.present && "#FFD639"};
   background-color: ${(p) => p.correct && "#91F5AD"};
@@ -102,4 +102,8 @@ interface AI {
 export const A = styled.a<AI>`
   opacity: ${(p) => p.disabled && 0.5};
   cursor: pointer;
+`;
+
+export const Title = styled.h1`
+  font-size: 24px;
 `;
