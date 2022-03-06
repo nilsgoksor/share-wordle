@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Keyboard } from "../components/Keyboard";
 import * as S from "../styled-components";
 import { wordleAnswers } from "../wordle-answers";
 import { wordleGuesses } from "../wordle-guesses";
@@ -7,169 +8,153 @@ interface PlayI {
   answer: string;
   author: string;
 }
+
 export const Play = ({ answer, author }: PlayI) => {
-  const [letterOne, setLetterOne] = useState("");
-  const [letterTwo, setLetterTwo] = useState("");
-  const [letterThree, setLetterThree] = useState("");
-  const [letterFour, setLetterFour] = useState("");
-  const [letterFive, setLetterFive] = useState("");
+  const [currKey, setCurrKey] = useState("");
+  const [word, setWord] = useState("");
+
+  const [guessIndex, setGuessIndex] = useState(0);
+  const [guesses, setGuesses] = useState<string[]>(["", "", "", "", "", ""]);
 
   const [victory, setVictory] = useState(false);
-  const [feedback, setFeedback] = useState("");
+  const [invalidWord, setInvalidWord] = useState(false);
 
-  const [guesses, setGuesses] = useState<string[]>([]);
-
-  const guess = `${letterOne}${letterTwo}${letterThree}${letterFour}${letterFive}`;
+  const updateWord = (key: string) => {
+    if (key === "BACKSPACE") {
+      setWord(word.substring(0, word.length - 1));
+    } else if (word.length < 5) {
+      setWord(`${word}${key}`);
+    }
+  };
 
   useEffect(() => {
-    !victory && setFeedback("");
-  }, [victory, guess]);
+    if (currKey.length > 0 && !victory) {
+      if (currKey === "ENTER") {
+        guessHandler();
+      } else {
+        updateWord(currKey);
+        setInvalidWord(false);
+      }
+      setCurrKey("");
+    }
+  }, [currKey, victory]);
+
+  useEffect(() => {
+    if (guessIndex <= 5) {
+      const updatedGuesses = [...guesses];
+      updatedGuesses[guessIndex] = word;
+      setGuesses(updatedGuesses);
+    }
+  }, [word]);
 
   const guessHandler = () => {
-    if (
-      wordleGuesses.includes(guess.toLowerCase()) ||
-      wordleAnswers.includes(guess.toLowerCase())
-    ) {
-      const updatedGuesses = [...guesses, guess];
-      setGuesses(updatedGuesses);
-      setLetterOne("");
-      setLetterTwo("");
-      setLetterThree("");
-      setLetterFour("");
-      setLetterFive("");
-      if (guess === answer) {
-        setVictory(true);
-        setFeedback(`Well done! Let ${author} know how it went :)`);
-      } else if (updatedGuesses.length === 5) {
-        setFeedback("Game over... :(");
+    if (guessIndex <= 5 && word.length === 5) {
+      if (
+        wordleGuesses.includes(word.toLowerCase()) ||
+        wordleAnswers.includes(word.toLowerCase())
+      ) {
+        const updatedGuesses = [...guesses];
+        updatedGuesses[guessIndex] = word;
+
+        setGuesses(updatedGuesses);
+        setGuessIndex(guessIndex + 1);
+        setWord("");
+        if (word === answer) {
+          setVictory(true);
+        }
       } else {
-        setFeedback("");
+        setInvalidWord(true);
       }
-    } else {
-      setFeedback("Word not in dictionary :O");
     }
   };
 
   const isLetterPresent = (l: string): boolean => {
     return answer.includes(l);
   };
-  const isLetterCorrect = (l: string, i: number): boolean => {
-    const letterIndex = answer.indexOf(l);
-    return letterIndex === i;
-  };
 
-  const gameFinished = victory || guesses.length === 5;
+  const isLetterCorrect = (l: string, i: number): boolean => {
+    return answer[i] === l;
+  };
 
   return (
     <>
-      <p>{`${author} sent you a custom wordle!`}</p>
-      {guesses.map((w) => (
-        <S.TileContainer key={w}>
+      <p>{`${author} sent you a custom wordle!`} 👋</p>
+      {guesses.map((w, i) => (
+        <S.TileContainer
+          id={`${w}${guessIndex}${i}`}
+          key={`${w}${guessIndex}${i}`}
+        >
           <S.Tile
-            present={isLetterPresent(w[0])}
-            correct={isLetterCorrect(w[0], 0)}
+            present={i < guessIndex && isLetterPresent(w[0])}
+            correct={i < guessIndex && isLetterCorrect(w[0], 0)}
           >
             {w[0]}
           </S.Tile>
           <S.Tile
-            present={isLetterPresent(w[1])}
-            correct={isLetterCorrect(w[1], 1)}
+            present={i < guessIndex && isLetterPresent(w[1])}
+            correct={i < guessIndex && isLetterCorrect(w[1], 1)}
           >
             {w[1]}
           </S.Tile>
           <S.Tile
-            present={isLetterPresent(w[2])}
-            correct={isLetterCorrect(w[2], 2)}
+            present={i < guessIndex && isLetterPresent(w[2])}
+            correct={i < guessIndex && isLetterCorrect(w[2], 2)}
           >
             {w[2]}
           </S.Tile>
           <S.Tile
-            present={isLetterPresent(w[3])}
-            correct={isLetterCorrect(w[3], 3)}
+            present={i < guessIndex && isLetterPresent(w[3])}
+            correct={i < guessIndex && isLetterCorrect(w[3], 3)}
           >
             {w[3]}
           </S.Tile>
           <S.Tile
-            present={isLetterPresent(w[4])}
-            correct={isLetterCorrect(w[4], 4)}
+            present={i < guessIndex && isLetterPresent(w[4])}
+            correct={i < guessIndex && isLetterCorrect(w[4], 4)}
           >
             {w[4]}
           </S.Tile>
         </S.TileContainer>
       ))}
-      {!gameFinished && (
-        <S.TileContainer>
-          <S.TypingTile
-            id="letter-one"
-            type="text"
-            maxLength={1}
-            value={letterOne}
-            autoFocus
-            onChange={(e) => {
-              const l = e.target.value.toUpperCase();
-              setLetterOne(l);
-              if (l.length > 0) {
-                document.getElementById("letter-two")?.focus();
-              }
-            }}
-          />
-          <S.TypingTile
-            id="letter-two"
-            type="text"
-            maxLength={1}
-            value={letterTwo}
-            onChange={(e) => {
-              const l = e.target.value.toUpperCase();
-              setLetterTwo(l);
-              if (l.length > 0) {
-                document.getElementById("letter-three")?.focus();
-              }
-            }}
-          />
-          <S.TypingTile
-            id="letter-three"
-            type="text"
-            maxLength={1}
-            value={letterThree}
-            onChange={(e) => {
-              const l = e.target.value.toUpperCase();
-              setLetterThree(l);
-              if (l.length > 0) {
-                document.getElementById("letter-four")?.focus();
-              }
-            }}
-          />
-          <S.TypingTile
-            id="letter-four"
-            type="text"
-            maxLength={1}
-            value={letterFour}
-            onChange={(e) => {
-              const l = e.target.value.toUpperCase();
-              setLetterFour(l);
-              if (l.length > 0) {
-                document.getElementById("letter-five")?.focus();
-              }
-            }}
-          />
-          <S.TypingTile
-            id="letter-five"
-            type="text"
-            maxLength={1}
-            value={letterFive}
-            onChange={(e) => {
-              const l = e.target.value.toUpperCase();
-              setLetterFive(l);
-            }}
-          />
-        </S.TileContainer>
-      )}
-      {!gameFinished && (
-        <S.Button onClick={() => guessHandler()} disabled={guess.length !== 5}>
+      {victory ? (
+        <>
+          <p>Well done! 👏</p>
+          <S.Button
+            onClick={() => window.open(window.location.origin, "_self")}
+          >
+            Create your own
+          </S.Button>
+        </>
+      ) : guessIndex <= 5 ? (
+        <S.Button onClick={() => guessHandler()} disabled={word.length !== 5}>
           Guess
         </S.Button>
+      ) : (
+        <p>Game over 🤯</p>
       )}
-      {feedback && <p>{feedback}</p>}
+      {invalidWord && <p>Word not in dictionary 🤪</p>}
+      <S.Footer>
+        <Keyboard
+          handleKeyPressed={(k) => setCurrKey(k)}
+          isKeyPresent={(k: string) =>
+            typeof [...guesses]
+              .splice(0, guessIndex)
+              .find((g) => g.includes(k)) !== "undefined"
+          }
+          isKeyCorrect={(k: string) =>
+            typeof [...guesses].splice(0, guessIndex).find((g) => {
+              const i = answer.indexOf(k);
+              return g[i] === answer[i] && i !== -1;
+            }) !== "undefined"
+          }
+          isKeyNotPresent={(k: string) =>
+            typeof [...guesses]
+              .splice(0, guessIndex)
+              .find((g) => g.includes(k) && answer.indexOf(k) === -1) !==
+            "undefined"
+          }
+        />
+      </S.Footer>
     </>
   );
 };
