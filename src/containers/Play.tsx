@@ -133,28 +133,30 @@ export const Play = ({ answer, author }: PlayI) => {
         <p>Game over 🤯</p>
       )}
       {invalidWord && <p>Word not in dictionary 🤪</p>}
-      <S.Footer>
-        <Keyboard
-          handleKeyPressed={(k) => setCurrKey(k)}
-          isKeyPresent={(k: string) =>
-            typeof [...guesses]
-              .splice(0, guessIndex)
-              .find((g) => g.includes(k)) !== "undefined"
-          }
-          isKeyCorrect={(k: string) =>
-            typeof [...guesses].splice(0, guessIndex).find((g) => {
-              const i = answer.indexOf(k);
-              return g[i] === answer[i] && i !== -1;
-            }) !== "undefined"
-          }
-          isKeyNotPresent={(k: string) =>
-            typeof [...guesses]
-              .splice(0, guessIndex)
-              .find((g) => g.includes(k) && answer.indexOf(k) === -1) !==
-            "undefined"
-          }
-        />
-      </S.Footer>
+      {!victory && (
+        <S.Footer>
+          <Keyboard
+            handleKeyPressed={(k) => setCurrKey(k)}
+            isKeyPresent={(k: string) =>
+              typeof [...guesses]
+                .splice(0, guessIndex)
+                .find((g) => g.includes(k)) !== "undefined"
+            }
+            isKeyCorrect={(k: string) =>
+              typeof [...guesses].splice(0, guessIndex).find((g) => {
+                const i = answer.indexOf(k);
+                return g[i] === answer[i] && i !== -1;
+              }) !== "undefined"
+            }
+            isKeyNotPresent={(k: string) =>
+              typeof [...guesses]
+                .splice(0, guessIndex)
+                .find((g) => g.includes(k) && answer.indexOf(k) === -1) !==
+              "undefined"
+            }
+          />
+        </S.Footer>
+      )}
     </>
   );
 };

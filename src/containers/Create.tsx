@@ -70,12 +70,10 @@ export const Create = () => {
 
   return (
     <>
-      <p>Create your own wordle and send to your friends ✍️</p>
+      <p>Create a wordle and send to your friends ✍️</p>
       <S.TileContainer>
         {word.split("").map((w, i) => (
-          <S.Tile key={i} present={false} correct={false}>
-            {w}
-          </S.Tile>
+          <S.Tile key={i}>{w}</S.Tile>
         ))}
       </S.TileContainer>
       {word.length === 5 && !validWord && <p>Word not in dictionary 🤪</p>}
@@ -93,7 +91,7 @@ export const Create = () => {
           )}
         </div>
       )}
-      {isShared && <p>URL copied to clipboard</p>}
+      {isShared && <p>URL copied to clipboard 💡</p>}
       <S.Footer>
         <Keyboard handleKeyPressed={(k) => setCurrKey(k)} />
       </S.Footer>

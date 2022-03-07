@@ -6,8 +6,8 @@ export const TileContainer = styled.div`
 `;
 
 interface TileI {
-  present: boolean;
-  correct: boolean;
+  present?: boolean;
+  correct?: boolean;
 }
 export const Tile = styled.div<TileI>`
   display: flex;
